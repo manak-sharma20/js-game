@@ -12,7 +12,13 @@ let playerScore = 0, aiScore = 0;
 
 canvas.addEventListener("mousemove", (event) => {
     const rect = canvas.getBoundingClientRect();
-    playerY = event.clientY - rect.top - paddleHeight / 2;
+    console.log(`Mouse Event Y: ${event.clientY}`); // Debugging statement
+    console.log(`Rect Top: ${rect.top}, Canvas Height: ${canvas.height}`); // Debugging statement
+    console.log(`Calculated PlayerY: ${event.clientY - rect.top - paddleHeight / 2}`); // Debugging statement
+    playerY = Math.max(0, Math.min(canvas.height - paddleHeight, event.clientY - rect.top - paddleHeight / 2));
+    console.log(`Updated Player Paddle Y: ${playerY}`); // Debugging statement
+    console.log(`Updated Player Paddle Y: ${playerY}`); // Debugging statement
+
 });
 
 
@@ -54,6 +60,7 @@ function resetBall() {
 }
 
 function draw() {
+    console.log(`Player Paddle Y: ${playerY}, AI Paddle Y: ${aiY}, Ball Position: (${ballX}, ${ballY})`); // Debugging statement
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw Paddles
