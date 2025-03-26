@@ -15,8 +15,13 @@ canvas.addEventListener("mousemove", (event) => {
     console.log(`Mouse Event Y: ${event.clientY}`); // Debugging statement
     console.log(`Rect Top: ${rect.top}, Canvas Height: ${canvas.height}`); // Debugging statement
     console.log(`Calculated PlayerY: ${event.clientY - rect.top - paddleHeight / 2}`); // Debugging statement
+    console.log(`Event Client Y: ${event.clientY}, Rect Top: ${rect.top}`); // Additional debugging statement
+    console.log(`Rect: ${JSON.stringify(rect)}`); // Debugging statement for rect
+    console.log(`Canvas Height: ${canvas.height}`); // Debugging statement for canvas height
     playerY = Math.max(0, Math.min(canvas.height - paddleHeight, event.clientY - rect.top - paddleHeight / 2));
     console.log(`Updated Player Paddle Y: ${playerY}`); // Debugging statement
+    console.log(`Final PlayerY after assignment: ${playerY}`); // Debugging statement for final playerY
+    console.log(`PlayerY after calculation: ${event.clientY - rect.top - paddleHeight / 2}`); // Additional debugging statement
     console.log(`Updated Player Paddle Y: ${playerY}`); // Debugging statement
 
 });
