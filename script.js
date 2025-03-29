@@ -61,6 +61,14 @@ function update() {
         resetBall();
     }
 
+    if (playerScore === 11) {
+        alert("Player wins!");
+        return; // Stop the game
+    } else if (aiScore === 11) {
+        alert("AI wins!");
+        return; // Stop the game
+    }
+
     document.getElementById("playerScore").innerText = playerScore;
     document.getElementById("aiScore").innerText = aiScore;
 }
