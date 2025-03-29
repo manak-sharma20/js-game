@@ -14,16 +14,26 @@ let difficulty = 'medium'; // Default difficulty
 const hitSound = new Audio('hit.mp3'); // Add your sound file path
 const scoreSound = new Audio('score.mp3'); // Add your sound file path
 
+hitSound.onerror = () => {
+    console.warn("Hit sound file not found.");
+};
+scoreSound.onerror = () => {
+    console.warn("Score sound file not found.");
+};
+
 document.getElementById("startButton").addEventListener("click", startGame);
 document.getElementById("difficulty").addEventListener("change", (event) => {
     difficulty = event.target.value;
 });
+
+let gameOver = false; // Add this line
 
 function startGame() {
     document.getElementById("startScreen").style.display = "none";
     document.querySelector(".table").style.display = "block";
     playerScore = 0;
     aiScore = 0;
+    gameOver = false; // Reset gameOver when starting a new game
     gameLoop();
 }
 
@@ -48,16 +58,22 @@ function update() {
         (ballX + ballSize >= canvas.width - paddleWidth && ballY >= aiY && ballY <= aiY + paddleHeight)
     ) {
         ballSpeedX *= -1; 
-        hitSound.play(); // Play hit sound
+        if (!hitSound.paused) {
+            hitSound.play(); // Play hit sound if available
+        }
     }
 
     if (ballX <= 0) {
         aiScore++;
-        scoreSound.play(); // Play score sound
+        if (!scoreSound.paused) {
+            scoreSound.play(); // Play score sound if available
+        }
         resetBall();
     } else if (ballX + ballSize >= canvas.width) {
         playerScore++;
-        scoreSound.play(); // Play score sound
+        if (!scoreSound.paused) {
+            scoreSound.play(); // Play score sound if available
+        }
         resetBall();
     }
 
@@ -95,6 +111,7 @@ function draw() {
 }
 
 function gameLoop() {
+    if (gameOver) return; // Stop the loop if the game is over
     update();
     draw();
     requestAnimationFrame(gameLoop);
