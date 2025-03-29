@@ -6,56 +6,63 @@ const ballSize = 10;
 let playerY = (canvas.height - paddleHeight) / 2;
 let aiY = (canvas.height - paddleHeight) / 2;
 let ballX = canvas.width / 2, ballY = canvas.height / 2;
-let ballSpeedX = 5, ballSpeedY = 5;
+let ballSpeedX = 10, ballSpeedY = 10;
 let playerScore = 0, aiScore = 0;
+let difficulty = 'medium'; // Default difficulty
 
+// Sound effects
+const hitSound = new Audio('hit.mp3'); // Add your sound file path
+const scoreSound = new Audio('score.mp3'); // Add your sound file path
+
+document.getElementById("startButton").addEventListener("click", startGame);
+document.getElementById("difficulty").addEventListener("change", (event) => {
+    difficulty = event.target.value;
+});
+
+function startGame() {
+    document.getElementById("startScreen").style.display = "none";
+    document.querySelector(".table").style.display = "block";
+    playerScore = 0;
+    aiScore = 0;
+    gameLoop();
+}
 
 canvas.addEventListener("mousemove", (event) => {
     const rect = canvas.getBoundingClientRect();
-    console.log(`Mouse Event Y: ${event.clientY}`); // Debugging statement
-    console.log(`Rect Top: ${rect.top}, Canvas Height: ${canvas.height}`); // Debugging statement
-    console.log(`Calculated PlayerY: ${event.clientY - rect.top - paddleHeight / 2}`); // Debugging statement
-    console.log(`Event Client Y: ${event.clientY}, Rect Top: ${rect.top}`); // Additional debugging statement
-    console.log(`Rect: ${JSON.stringify(rect)}`); // Debugging statement for rect
-    console.log(`Canvas Height: ${canvas.height}`); // Debugging statement for canvas height
     playerY = Math.max(0, Math.min(canvas.height - paddleHeight, event.clientY - rect.top - paddleHeight / 2));
-    console.log(`Updated Player Paddle Y: ${playerY}`); // Debugging statement
-    console.log(`Final PlayerY after assignment: ${playerY}`); // Debugging statement for final playerY
-    console.log(`PlayerY after calculation: ${event.clientY - rect.top - paddleHeight / 2}`); // Additional debugging statement
-    console.log(`Updated Player Paddle Y: ${playerY}`); // Debugging statement
-
 });
-
 
 function update() {
     ballX += ballSpeedX;
     ballY += ballSpeedY;
 
-    
     if (ballY <= 0 || ballY + ballSize >= canvas.height) {
         ballSpeedY *= -1;
     }
 
-    
-    if (aiY + paddleHeight / 2 < ballY) aiY += 5;
-    else if (aiY + paddleHeight / 2 > ballY) aiY -= 5;
+    if (aiY + paddleHeight / 2 < ballY) aiY += difficulty === 'hard' ? 10 : 5;
+    else if (aiY + paddleHeight / 2 > ballY) aiY -= difficulty === 'hard' ? 10 : 5;
 
-   
     if (
         (ballX <= paddleWidth && ballY >= playerY && ballY <= playerY + paddleHeight) ||
         (ballX + ballSize >= canvas.width - paddleWidth && ballY >= aiY && ballY <= aiY + paddleHeight)
     ) {
         ballSpeedX *= -1; 
+        hitSound.play(); // Play hit sound
     }
 
-    
     if (ballX <= 0) {
         aiScore++;
+        scoreSound.play(); // Play score sound
         resetBall();
     } else if (ballX + ballSize >= canvas.width) {
         playerScore++;
+        scoreSound.play(); // Play score sound
         resetBall();
     }
+
+    document.getElementById("playerScore").innerText = playerScore;
+    document.getElementById("aiScore").innerText = aiScore;
 }
 
 function resetBall() {
@@ -65,15 +72,10 @@ function resetBall() {
 }
 
 function draw() {
-    console.log(`Player Paddle Y: ${playerY}, AI Paddle Y: ${aiY}, Ball Position: (${ballX}, ${ballY})`); // Debugging statement
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw Paddles
     ctx.fillStyle = "white";
     ctx.fillRect(0, playerY, paddleWidth, paddleHeight);
     ctx.fillRect(canvas.width - paddleWidth, aiY, paddleWidth, paddleHeight);
-
-    // Draw Ball
     ctx.beginPath();
     ctx.arc(ballX, ballY, ballSize, 0, Math.PI * 2);
     ctx.fill();
@@ -89,5 +91,4 @@ function gameLoop() {
     draw();
     requestAnimationFrame(gameLoop);
 }
-
 gameLoop();
